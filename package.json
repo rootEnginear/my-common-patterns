@@ -13,6 +13,7 @@
   "dependencies": {
     "@rena.to/github-blog": "^0.4.1",
     "astro": "^1.5.2",
+    "astro-compress": "^1.0.12",
     "marked": "^4.1.1"
   },
   "devDependencies": {
