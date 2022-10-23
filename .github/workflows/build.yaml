@@ -1,0 +1,29 @@
+name: build-astro-page
+
+on:
+  push:
+    branches:
+      - main
+  issue_comment:
+    types: [created, deleted]
+  issues:
+    types: [labeled, unlabeled]
+  workflow_dispatch:
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Init
+        run: yarn
+      - name: Build
+        run: yarn build
+      - name: Deploy
+        uses: s0/git-publish-subdir-action@v2.3.0
+        env:
+          REPO: self
+          BRANCH: page
+          FOLDER: dist
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
