@@ -1,15 +1,37 @@
 ---
+import { GithubBlog } from "@rena.to/github-blog";
+
+const blog = new GithubBlog({
+  repo: "rootenginear/my-common-pattern",
+  token: import.meta.env.TOKEN,
+});
+
+const posts = await blog.getPosts({
+  query: { type: "post", state: "published" },
+  pager: { limit: 100 },
+});
+
+const slugs = posts.edges.map((e) => e.post.labels.slug?.[0]);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Astro</title>
+  </head>
+  <body>
+    <h1>Hello Welcome</h1>
+    <ul>
+      {
+        slugs.map((e) => (
+          <li>
+            <a href={`/${e}`}>{e}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </body>
 </html>

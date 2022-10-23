@@ -1,0 +1,73 @@
+---
+import { GithubBlog } from "@rena.to/github-blog";
+import { marked } from "marked";
+
+export async function getStaticPaths() {
+  const blog = new GithubBlog({
+    repo: "rootenginear/my-common-pattern",
+    token: import.meta.env.TOKEN,
+  });
+
+  const posts = await blog.getPosts({
+    query: { type: "post", state: "published" },
+    pager: { limit: 100 },
+  });
+
+  const paths = posts.edges.map((e) => ({ params: { slug: e.post.labels.slug?.[0] } }));
+
+  return paths;
+}
+
+const blog = new GithubBlog({
+  repo: "rootenginear/my-common-pattern",
+  token: import.meta.env.TOKEN,
+});
+
+const { slug } = Astro.params;
+
+const post = await blog.getPost({
+  query: { slug: slug?.toLocaleString() },
+});
+
+const parsed_content = marked.parse(post.post?.body ?? "");
+---
+
+<meta charset="utf-8" />
+<article>
+  <h1>{post.post?.title}</h1>
+  <dl>
+    <dt>Original Issue:</dt>
+    <dd>{post.post?.url}</dd>
+    <dt>Create:</dt>
+    <dd>{new Date(post.post?.createdAt ?? "").toLocaleDateString()}</dd>
+    <dt>Latest Update:</dt>
+    <dd>{new Date(post.post?.updatedAt ?? "").toLocaleDateString()}</dd>
+    <dt>Author:</dt>
+    <dd>
+      <img src={post.post?.author.avatarUrl} alt={post.post?.author.login} />{
+        post.post?.author.login
+      } (@{post.post?.author.twitterUsername})
+    </dd>
+  </dl>
+  <hr />
+  <Fragment set:html={parsed_content} />
+  <hr />
+  <p>
+    {post.post?.totalComments} comments<br />
+    {post.post?.totalReactions} reactions<br />
+    👍&#xFE0F; {post.post?.reactions.THUMBS_UP}<br />
+    👎&#xFE0F; {post.post?.reactions.THUMBS_DOWN}<br />
+    😂&#xFE0F; {post.post?.reactions.LAUGH}<br />
+    🎉&#xFE0F; {post.post?.reactions.HOORAY}<br />
+    🤨&#xFE0F; {post.post?.reactions.CONFUSED}<br />
+    ❤️&#xFE0F; {post.post?.reactions.HEART}<br />
+    🚀&#xFE0F; {post.post?.reactions.ROCKET}<br />
+    👀&#xFE0F; {post.post?.reactions.EYES}
+  </p>
+</article>
+
+<style>
+  html {
+    color-scheme: dark;
+  }
+</style>
