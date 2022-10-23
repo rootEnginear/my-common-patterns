@@ -19,10 +19,9 @@ const posts = await blog.getPosts({
     {
       posts.edges.map((post) => (
         <li>
-          <a href={`/${post.post.labels.slug?.[0]}`}>{post.post.title}</a>
+          <a href={`./${post.post.labels.slug?.[0]}`}>{post.post.title}</a>
         </li>
       ))
     }
   </ul>
 </Layout>
-
