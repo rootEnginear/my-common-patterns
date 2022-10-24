@@ -1,9 +1,10 @@
 ---
 import Layout from "./_layout.astro";
 import { GithubBlog } from "@rena.to/github-blog";
+import Article from "../components/article.astro";
 
 const blog = new GithubBlog({
-  repo: "rootenginear/my-common-pattern",
+  repo: "rootenginear/my-common-patterns",
   token: import.meta.env.TOKEN,
 });
 
@@ -11,17 +12,25 @@ const posts = await blog.getPosts({
   query: { type: "post", state: "published" },
   pager: { limit: 100 },
 });
+
+const slugs = posts.edges.map((post) => post.post.labels.slug?.[0]);
 ---
 
 <Layout>
-  <h1>My Common Pattern</h1>
-  <ul>
-    {
-      posts.edges.map((post) => (
-        <li>
-          <a href={`./${post.post.labels.slug?.[0]}`}>{post.post.title}</a>
-        </li>
-      ))
-    }
-  </ul>
+  <main>
+    <header class="f main-header">
+      <img src="artist_palette.png" alt="" width="64" height="64" />
+      <div>
+        <h1>My Common Patterns</h1>
+        <p>Pattern CSS/JS ที่มักจะใช้บ่อยๆ ตอน Dev จะได้เปิดมา Copy ง่ายๆ</p>
+      </div>
+    </header>
+    {slugs.map((slug) => slug && <Article slug={slug} />)}
+  </main>
 </Layout>
+
+<style>
+  .main-header {
+    margin-bottom: 32px;
+  }
+</style>

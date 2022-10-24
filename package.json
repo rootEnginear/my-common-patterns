@@ -1,5 +1,5 @@
 {
-  "name": "@example/minimal",
+  "name": "my-common-patterns",
   "type": "module",
   "version": "0.0.1",
   "private": true,
@@ -17,6 +17,7 @@
     "marked": "^4.1.1"
   },
   "devDependencies": {
-    "@types/marked": "^4.0.7"
+    "@types/marked": "^4.0.7",
+    "sass": "^1.55.0"
   }
 }

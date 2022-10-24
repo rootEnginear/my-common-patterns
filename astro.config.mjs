@@ -5,7 +5,7 @@ import compress from "astro-compress";
 // https://astro.build/config
 export default defineConfig({
   site: "https://rootenginear.github.io",
-  base: "/my-common-pattern",
+  base: "/my-common-patterns",
   integrations: [
     compress({
       html: {

@@ -1,0 +1,194 @@
+---
+import { GithubBlog } from "@rena.to/github-blog";
+import { marked } from "marked";
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+
+const blog = new GithubBlog({
+  repo: "rootenginear/my-common-patterns",
+  token: import.meta.env.TOKEN,
+});
+
+const post = await blog.getPost({
+  query: { slug: slug?.toLocaleString() },
+});
+
+const parsed_content = marked.parse(post.post?.body ?? "");
+
+const date_formatter = new Intl.DateTimeFormat("th-TH", {
+  dateStyle: "medium",
+});
+const formatDate = (date: Date) => date_formatter.format(date);
+---
+
+<article>
+  <header class="f">
+    <h1 title={post.post?.title}>
+      {post.post?.title}
+    </h1>
+    <a
+      class="f"
+      href={post.post?.url}
+      target="_blank"
+      rel="nofollow noopener noreferrer"
+      title="ดู Issue บน GitHub"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="currentColor"
+        viewBox="0 0 24 24"
+        width="32"
+        height="32"
+        aria-label="ดู Issue บน GitHub"
+      >
+        <path
+          d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+        ></path>
+      </svg>
+    </a>
+  </header>
+  <hr />
+  <Fragment set:html={parsed_content} />
+  <hr />
+  <footer class="f">
+    <a
+      class="stats-container"
+      href={post.post?.url}
+      target="_blank"
+      rel="nofollow noopener noreferrer"
+      title={post.post?.totalComments + " คอมเมนต์"}
+    >
+      <img src="speech_balloon.png" alt="" width="24" height="24" />
+      <span class="stat-total">{post.post?.totalComments} คอมเมนต์</span>
+    </a>
+    {
+      !!post.post?.totalReactions && (
+        <a
+          class="stats-container"
+          href={post.post?.url}
+          target="_blank"
+          rel="nofollow noopener noreferrer"
+          title={post.post?.totalReactions + " รีแอคชัน"}
+        >
+          {!!post.post?.reactions.THUMBS_UP && (
+            <img src="thumbs_up_default.png" alt="" width="24" height="24" />
+          )}
+          {!!post.post?.reactions.THUMBS_DOWN && (
+            <img src="thumbs_down_default.png" alt="" width="24" height="24" />
+          )}
+          {!!post.post?.reactions.LAUGH && (
+            <img src="face_with_tears_of_joy.png" alt="" width="24" height="24" />
+          )}
+          {!!post.post?.reactions.HOORAY && (
+            <img src="party_popper.png" alt="" width="24" height="24" />
+          )}
+          {!!post.post?.reactions.CONFUSED && (
+            <img src="face_with_raised_eyebrow.png" alt="" width="24" height="24" />
+          )}
+          {!!post.post?.reactions.HEART && (
+            <img src="red_heart.png" alt="" width="24" height="24" />
+          )}
+          {!!post.post?.reactions.ROCKET && (
+            <img src="rocket.png" alt="" width="24" height="24" />
+          )}
+          {!!post.post?.reactions.EYES && (
+            <img src="eyes.png" alt="" width="24" height="24" />
+          )}
+          <span class="stat-total">
+            {post.post?.totalReactions}
+            <span class="visually-hidden"> รีแอคชัน</span>
+          </span>
+        </a>
+      )
+    }
+    <div class="f author-container">
+      <div>
+        <div>
+          {post.post?.author.login}
+          {
+            post.post?.author.twitterUsername && (
+              <a href={"https://twitter.com/" + post.post?.author.twitterUsername}>
+                (@{post.post?.author.twitterUsername})
+              </a>
+            )
+          }
+        </div>
+        <div class="article-date">
+          <time datetime={new Date(post.post?.createdAt ?? "").toISOString()}
+            >{formatDate(new Date(post.post?.createdAt ?? ""))}</time
+          >
+          (แก้ไขล่าสุด: <time
+            datetime={new Date(post.post?.updatedAt ?? "").toISOString()}
+            >{formatDate(new Date(post.post?.updatedAt ?? ""))}</time
+          >)
+        </div>
+      </div>
+      <img
+        class="author-image"
+        src={post.post?.author.avatarUrl}
+        alt={post.post?.author.login}
+      />
+    </div>
+  </footer>
+  <p></p>
+</article>
+
+<style lang="scss">
+  article {
+    border: 1px solid;
+    padding: 16px;
+    border-radius: 4px;
+  }
+
+  h1 {
+    margin: 0;
+    flex: 1 1 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  hr {
+    margin: 16px -16px;
+  }
+
+  .stats-container {
+    display: flex;
+    align-items: center;
+
+    padding: 4px 12px;
+
+    border: 1px solid;
+    border-radius: 999px;
+
+    text-decoration: none;
+
+    > img:not(:first-child) {
+      margin-left: -12px;
+    }
+
+    > .stat-total {
+      margin-left: 8px;
+    }
+  }
+
+  .author-container {
+    margin-left: auto;
+
+    text-align: end;
+  }
+
+  .article-date {
+    font-size: 0.8rem;
+  }
+
+  .author-image {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+  }
+</style>

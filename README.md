@@ -1,6 +1,6 @@
-# my-common-pattern
+# my-common-patterns
 
-Common pattern that I used and might lookup from time to time.
+Pattern CSS/JS ที่มักจะใช้บ่อยๆ ตอน Dev จะได้เปิดมา Copy ง่ายๆ
 
 ## Astro Starter Kit: Minimal
 
