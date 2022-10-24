@@ -17,20 +17,5 @@ const slugs = posts.edges.map((post) => post.post.labels.slug?.[0]);
 ---
 
 <Layout>
-  <main>
-    <header class="f main-header">
-      <img src="favicon.png" alt="" width="64" height="64" />
-      <div>
-        <h1>My Common Patterns</h1>
-        <p>Pattern CSS/JS ที่มักจะใช้บ่อยๆ ตอน Dev จะได้เปิดมา Copy ง่ายๆ</p>
-      </div>
-    </header>
-    {slugs.map((slug) => slug && <Article slug={slug} />)}
-  </main>
+  {slugs.map((slug) => slug && <Article slug={slug} />)}
 </Layout>
-
-<style>
-  .main-header {
-    margin-bottom: 32px;
-  }
-</style>

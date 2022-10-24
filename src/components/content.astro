@@ -1,0 +1,84 @@
+---
+import { getHighlighter } from "shiki";
+import { marked } from "marked";
+
+interface Props {
+  markdown: string;
+}
+
+const { markdown } = Astro.props;
+
+const highlighter = await getHighlighter({
+  theme: "github-dark-dimmed",
+});
+
+marked.setOptions({
+  highlight: (code, lang) => highlighter.codeToHtml(code, { lang }),
+});
+
+const html = marked
+  .parse(markdown)
+  .replace(/<pre><code class="language-.+?">/g, "")
+  .replace(/<\/code><\/pre>\n<\/code><\/pre>/g, "</code></pre>");
+---
+
+<div class="content">
+  <Fragment set:html={html} />
+</div>
+
+<style lang="scss" is:global>
+  .content {
+    :where(h1, h2, h3) {
+      margin: 16px 0;
+      border-bottom: 2px solid;
+    }
+
+    :where(p, blockquote) {
+      margin: 8px 0;
+    }
+
+    blockquote {
+      border-left: 2px solid;
+      padding-left: 8px;
+      border-radius: 2px;
+    }
+
+    code {
+      background: #22272e;
+      padding: 2px 4px;
+      border-radius: 2px;
+
+      font-size: 0.9rem;
+      font-family: "JetBrains Mono", Consolas, "Andale Mono WT", "Andale Mono",
+        "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono",
+        "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco,
+        "Courier New", Courier, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji",
+        monospace;
+    }
+
+    pre {
+      padding: 8px;
+      border-radius: 4px;
+
+      overflow-x: auto;
+    }
+
+    pre > code {
+      padding: 0;
+      border-radius: 0;
+
+      counter-reset: code-line;
+      counter-increment: code-line 0;
+    }
+
+    code .line::before {
+      content: counter(code-line);
+      counter-increment: code-line;
+      width: 1.5rem;
+      margin-right: 1rem;
+      display: inline-block;
+      text-align: right;
+      color: #636e7b;
+    }
+  }
+</style>

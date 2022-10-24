@@ -1,6 +1,7 @@
 ---
 import { GithubBlog } from "@rena.to/github-blog";
-import { marked } from "marked";
+
+import Content from "./content.astro";
 
 interface Props {
   slug: string;
@@ -16,8 +17,6 @@ const blog = new GithubBlog({
 const post = await blog.getPost({
   query: { slug: slug?.toLocaleString() },
 });
-
-const parsed_content = marked.parse(post.post?.body ?? "");
 
 const date_formatter = new Intl.DateTimeFormat("th-TH", {
   dateStyle: "medium",
@@ -52,7 +51,7 @@ const formatDate = (date: Date) => date_formatter.format(date);
     </a>
   </header>
   <hr />
-  <Fragment set:html={parsed_content} />
+  <Content markdown={post.post?.body ?? ""} />
   <hr />
   <footer class="f">
     <a
@@ -143,7 +142,7 @@ const formatDate = (date: Date) => date_formatter.format(date);
     padding: 16px;
     border-radius: 4px;
 
-    margin-bottom: 32px;
+    margin-top: 32px;
   }
 
   h1 {
@@ -158,6 +157,11 @@ const formatDate = (date: Date) => date_formatter.format(date);
     margin: 16px -16px;
   }
 
+  footer {
+    // flex-direction: column;
+    flex-wrap: wrap;
+  }
+
   .stats-container {
     display: flex;
     align-items: center;
@@ -168,6 +172,7 @@ const formatDate = (date: Date) => date_formatter.format(date);
     border-radius: 999px;
 
     text-decoration: none;
+    white-space: nowrap;
 
     > img:not(:first-child) {
       margin-left: -12px;
@@ -180,12 +185,15 @@ const formatDate = (date: Date) => date_formatter.format(date);
 
   .author-container {
     margin-left: auto;
+    overflow-x: auto;
 
     text-align: end;
+    white-space: nowrap;
   }
 
   .article-date {
     font-size: 0.8rem;
+    white-space: nowrap;
   }
 
   .author-image {
