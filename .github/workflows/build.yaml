@@ -12,6 +12,7 @@ on:
 
 jobs:
   main:
+    if: ${{ contains(fromJson('["push", "workflow_dispatch", "issue_comment"]'), github.event_name) || github.event.label.name == 'state:published' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
