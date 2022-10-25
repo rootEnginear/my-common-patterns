@@ -10,6 +10,10 @@ on:
     types: [opened, edited, deleted, labeled, unlabeled]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 jobs:
   build_on_general_events:
     if: ${{ contains(fromJson('["push", "issue_comment", "workflow_dispatch"]'), github.event_name) }}
