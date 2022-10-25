@@ -1,0 +1,12 @@
+name: debug
+
+on:
+  issues:
+    types: [labeled, unlabeled]
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log github variable
+        run: echo "${{ toJSON(github.event) }}"
