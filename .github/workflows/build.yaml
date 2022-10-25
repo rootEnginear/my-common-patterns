@@ -1,9 +1,6 @@
 name: build-astro-page
 
 on:
-  push:
-    branches:
-      - main
   issue_comment:
     types: [created, deleted]
   issues:
@@ -16,7 +13,7 @@ concurrency:
 
 jobs:
   build_on_general_events:
-    if: ${{ contains(fromJson('["push", "issue_comment", "workflow_dispatch"]'), github.event_name) }}
+    if: ${{ contains(fromJson('["issue_comment", "workflow_dispatch"]'), github.event_name) }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
