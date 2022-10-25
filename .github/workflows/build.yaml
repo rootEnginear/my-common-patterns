@@ -7,12 +7,50 @@ on:
   issue_comment:
     types: [created, deleted]
   issues:
-    types: [labeled, unlabeled]
+    types: [opened, edited, deleted, labeled, unlabeled]
   workflow_dispatch:
 
 jobs:
-  main:
-    if: ${{ contains(fromJson('["push", "workflow_dispatch", "issue_comment"]'), github.event_name) || github.event.label.name == 'state:published' }}
+  build_on_general_events:
+    if: ${{ contains(fromJson('["push", "issue_comment", "workflow_dispatch"]'), github.event_name) }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Init
+        run: yarn
+      - name: Build
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
+        run: yarn build
+      - name: Deploy
+        uses: s0/git-publish-subdir-action@v2.3.0
+        env:
+          REPO: self
+          BRANCH: page
+          FOLDER: dist
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  build_on_modifying_issues:
+    if: ${{ github.event_name == 'issues' && contains(fromJson('["opened", "edited", "deleted"]'), github.event.action) && contains(github.event.issue.labels.*.name, 'state:published') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Init
+        run: yarn
+      - name: Build
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
+        run: yarn build
+      - name: Deploy
+        uses: s0/git-publish-subdir-action@v2.3.0
+        env:
+          REPO: self
+          BRANCH: page
+          FOLDER: dist
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  build_on_labeling_issues:
+    if: ${{ github.event_name == 'issues' && contains(fromJson('["labeled", "unlabeled"]'), github.event.action) && github.event.label.name == 'state:published' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
