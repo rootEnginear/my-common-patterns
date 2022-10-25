@@ -27,7 +27,7 @@
         </div>
       </header>
       <slot />
-      <footer>
+      <footer class="main-footer">
         Copyright &copy; {new Date().getFullYear()} Suthep Chanchuphol All right reserved.
         <br />
         <small>Build: {Date.now().toString(36)}</small>
@@ -73,11 +73,6 @@
         margin: auto;
       }
 
-      footer {
-        text-align: center;
-        margin-top: 32px;
-      }
-
       .f {
         display: flex;
         align-items: center;
@@ -86,6 +81,11 @@
 
       .main-header {
         margin-bottom: 32px;
+      }
+
+      .main-footer {
+        text-align: center;
+        margin-top: 32px;
       }
     </style>
   </body>

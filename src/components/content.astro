@@ -28,12 +28,16 @@ const html = marked
 
 <style lang="scss" is:global>
   .content {
-    :where(h1, h2, h3) {
+    hr {
+      border: none;
+    }
+
+    :is(h1, h2, h3, hr) {
       margin: 16px 0;
       border-bottom: 2px solid;
     }
 
-    :where(p, blockquote) {
+    :is(p, blockquote, pre, ol, ul, table, img) {
       margin: 8px 0;
     }
 
@@ -45,8 +49,9 @@ const html = marked
 
     code {
       background: #22272e;
+      color: #fff;
       padding: 2px 4px;
-      border-radius: 2px;
+      border-radius: 4px;
 
       font-size: 0.9rem;
       font-family: "JetBrains Mono", Consolas, "Andale Mono WT", "Andale Mono",
@@ -79,6 +84,34 @@ const html = marked
       display: inline-block;
       text-align: right;
       color: #636e7b;
+    }
+
+    :is(ul, ol) {
+      margin-left: 2ch;
+    }
+
+    li > :is(ul, ol) {
+      margin: 0 0 0 2ch;
+    }
+
+    table {
+      border-collapse: collapse;
+
+      td,
+      th {
+        padding: 8px;
+        border: 1px solid;
+      }
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    del {
+      opacity: 0.5;
+      text-decoration: line-through #ff4136 double;
     }
   }
 </style>
