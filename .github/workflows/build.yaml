@@ -4,7 +4,7 @@ on:
   issue_comment:
     types: [created, deleted]
   issues:
-    types: [opened, edited, deleted, labeled, unlabeled]
+    types: [opened, edited, deleted]
   workflow_dispatch:
 
 concurrency:
@@ -37,26 +37,7 @@ jobs:
           FOLDER: dist
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   build_on_modifying_issues:
-    if: ${{ github.event_name == 'issues' && contains(fromJson('["opened", "edited", "deleted"]'), github.event.action) && contains(github.event.issue.labels.*.name, 'state:published') }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Init
-        run: yarn
-      - name: Build
-        env:
-          TOKEN: ${{ secrets.TOKEN }}
-        run: yarn build
-      - name: Deploy
-        uses: s0/git-publish-subdir-action@v2.3.0
-        env:
-          REPO: self
-          BRANCH: page
-          FOLDER: dist
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  build_on_labeling_issues:
-    if: ${{ github.event_name == 'issues' && contains(fromJson('["labeled", "unlabeled"]'), github.event.action) && github.event.label.name == 'state:published' }}
+    if: ${{ github.event_name == 'issues' && contains(github.event.issue.labels.*.name, 'state:published') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
