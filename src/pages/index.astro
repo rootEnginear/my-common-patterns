@@ -17,5 +17,4 @@ const { data: issues } = await octokit.request("GET /repos/{owner}/{repo}/issues
 
 <Layout>
   {issues.map((issue) => <Article issue={issue} />)}
-  <pre>{JSON.stringify(issues[0], null, 2)}</pre>
 </Layout>
