@@ -1,6 +1,6 @@
 ---
-import { getHighlighter } from "shiki";
 import { marked } from "marked";
+import { getHighlighter } from "shiki";
 
 interface Props {
   markdown: string;
@@ -19,7 +19,11 @@ marked.setOptions({
 const html = marked
   .parse(markdown)
   .replace(/<pre><code class="language-.+?">/g, "")
-  .replace(/<\/code><\/pre>\n<\/code><\/pre>/g, "</code></pre>");
+  .replace(/<\/code><\/pre>\n<\/code><\/pre>/g, "</code></pre>")
+  .replace(
+    /<a href="(.+?)"/g,
+    '<a href="$1" target="_blank" rel="nofollow noopener noreferrer" title="$1"'
+  );
 ---
 
 <div class="content">

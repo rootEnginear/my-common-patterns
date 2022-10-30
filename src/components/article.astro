@@ -1,22 +1,12 @@
 ---
-import { GithubBlog } from "@rena.to/github-blog";
-
+import type { Endpoints } from "@octokit/types";
 import Content from "./content.astro";
 
 interface Props {
-  slug: string;
+  issue: Endpoints["GET /repos/{owner}/{repo}/issues"]["response"]["data"][0];
 }
 
-const { slug } = Astro.props;
-
-const blog = new GithubBlog({
-  repo: "rootenginear/my-common-patterns",
-  token: import.meta.env.TOKEN,
-});
-
-const post = await blog.getPost({
-  query: { slug: slug?.toLocaleString() },
-});
+const { issue } = Astro.props;
 
 const date_formatter = new Intl.DateTimeFormat("th-TH", {
   dateStyle: "medium",
@@ -26,12 +16,12 @@ const formatDate = (date: Date) => date_formatter.format(date);
 
 <article>
   <header class="f">
-    <h1 title={post.post?.title}>
-      {post.post?.title}
+    <h1 title={issue.title}>
+      {issue.title}
     </h1>
     <a
       class="f"
-      href={post.post?.url}
+      href={issue.html_url}
       target="_blank"
       rel="nofollow noopener noreferrer"
       title="ดู Issue บน GitHub"
@@ -51,54 +41,52 @@ const formatDate = (date: Date) => date_formatter.format(date);
     </a>
   </header>
   <hr />
-  <Content markdown={post.post?.body ?? ""} />
+  <Content markdown={issue.body ?? ""} />
   <hr />
   <footer class="f">
     <a
       class="stats-container"
-      href={post.post?.url}
+      href={issue.html_url}
       target="_blank"
       rel="nofollow noopener noreferrer"
-      title={post.post?.totalComments + " คอมเมนต์"}
+      title={issue.comments + " คอมเมนต์"}
     >
       <img src="speech_balloon.png" alt="" width="24" height="24" />
-      <span class="stat-total">{post.post?.totalComments} คอมเมนต์</span>
+      <span class="stat-total">{issue.comments} คอมเมนต์</span>
     </a>
     {
-      !!post.post?.totalReactions && (
+      !!issue.reactions?.total_count && (
         <a
           class="stats-container"
-          href={post.post?.url}
+          href={issue.html_url}
           target="_blank"
           rel="nofollow noopener noreferrer"
-          title={post.post?.totalReactions + " รีแอคชัน"}
+          title={issue.reactions.total_count + " รีแอคชัน"}
         >
-          {!!post.post?.reactions.THUMBS_UP && (
+          {!!issue.reactions["+1"] && (
             <img src="thumbs_up_default.png" alt="" width="24" height="24" />
           )}
-          {!!post.post?.reactions.THUMBS_DOWN && (
+          {!!issue.reactions["-1"] && (
             <img src="thumbs_down_default.png" alt="" width="24" height="24" />
           )}
-          {!!post.post?.reactions.LAUGH && (
+          {!!issue.reactions.laugh && (
             <img src="face_with_tears_of_joy.png" alt="" width="24" height="24" />
           )}
-          {!!post.post?.reactions.HOORAY && (
+          {!!issue.reactions.hooray && (
             <img src="party_popper.png" alt="" width="24" height="24" />
           )}
-          {!!post.post?.reactions.CONFUSED && (
+          {!!issue.reactions.confused && (
             <img src="face_with_raised_eyebrow.png" alt="" width="24" height="24" />
           )}
-          {!!post.post?.reactions.HEART && (
+          {!!issue.reactions.heart && (
             <img src="red_heart.png" alt="" width="24" height="24" />
           )}
-          {!!post.post?.reactions.ROCKET && (
+          {!!issue.reactions.rocket && (
             <img src="rocket.png" alt="" width="24" height="24" />
           )}
-          {!!post.post?.reactions.EYES && (
-            <img src="eyes.png" alt="" width="24" height="24" />
-          )}
+          {!!issue.reactions.eyes && <img src="eyes.png" alt="" width="24" height="24" />}
           <span class="stat-total">
-            {post.post?.totalReactions}
+            {issue.reactions.total_count}
             <span class="visually-hidden"> รีแอคชัน</span>
           </span>
         </a>
@@ -107,35 +95,21 @@ const formatDate = (date: Date) => date_formatter.format(date);
     <div class="f author-container">
       <div>
         <div>
-          {post.post?.author.login}
-          {
-            post.post?.author.twitterUsername && (
-              <a href={"https://twitter.com/" + post.post?.author.twitterUsername}>
-                (@{post.post?.author.twitterUsername})
-              </a>
-            )
-          }
+          {issue.user?.login}
         </div>
         <div class="article-date">
-          <time datetime={new Date(post.post?.createdAt ?? "").toISOString()}
-            >{formatDate(new Date(post.post?.createdAt ?? ""))}</time
+          <time datetime={new Date(issue.created_at ?? "").toISOString()}
+            >{formatDate(new Date(issue.created_at ?? ""))}</time
           >
-          (แก้ไขล่าสุด: <time
-            datetime={new Date(post.post?.updatedAt ?? "").toISOString()}
-            >{formatDate(new Date(post.post?.updatedAt ?? ""))}</time
+          (แก้ไขล่าสุด: <time datetime={new Date(issue.updated_at ?? "").toISOString()}
+            >{formatDate(new Date(issue.updated_at ?? ""))}</time
           >)
         </div>
       </div>
-      <img
-        class="author-image"
-        src={post.post?.author.avatarUrl}
-        alt={post.post?.author.login}
-      />
+      <img class="author-image" src={issue.user?.avatar_url} alt={issue.user?.login} />
     </div>
   </footer>
-  <p></p>
 </article>
-
 <style lang="scss">
   article {
     border: 1px solid;

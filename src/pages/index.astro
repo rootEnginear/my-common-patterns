@@ -1,21 +1,21 @@
 ---
-import Layout from "./_layout.astro";
-import { GithubBlog } from "@rena.to/github-blog";
 import Article from "../components/article.astro";
+import Layout from "./_layout.astro";
 
-const blog = new GithubBlog({
-  repo: "rootenginear/my-common-patterns",
-  token: import.meta.env.TOKEN,
+import { Octokit } from "@octokit/core";
+
+const octokit = new Octokit({
+  auth: import.meta.env.TOKEN,
 });
 
-const posts = await blog.getPosts({
-  query: { type: "post", state: "published" },
-  pager: { limit: 100 },
+const { data: issues } = await octokit.request("GET /repos/{owner}/{repo}/issues", {
+  owner: "rootenginear",
+  repo: "my-common-patterns",
+  labels: "state:published,type:post",
 });
-
-const slugs = posts.edges.map((post) => post.post.labels.slug?.[0]);
 ---
 
 <Layout>
-  {slugs.map((slug) => slug && <Article slug={slug} />)}
+  {issues.map((issue) => <Article issue={issue} />)}
+  <pre>{JSON.stringify(issues[0], null, 2)}</pre>
 </Layout>
