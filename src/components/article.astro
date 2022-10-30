@@ -1,5 +1,9 @@
 ---
 import type { Endpoints } from "@octokit/types";
+
+import { TAG_DATA } from "../data/tag-color";
+import type { TagsType } from "../data/tag-color";
+
 import Content from "./content.astro";
 
 interface Props {
@@ -7,6 +11,29 @@ interface Props {
 }
 
 const { issue } = Astro.props;
+
+const tags = issue.labels
+  .map((e): [string, string | null] => {
+    let tag = typeof e === "string" ? e : e.name ?? ":";
+    let splitted_tag = tag.split(":");
+    return [splitted_tag[0], splitted_tag[1] ?? null];
+  })
+  .filter(([type, value]) => !!value && type === "tag")
+  .map(([_, value]) => {
+    if (!value) return;
+    if (value in TAG_DATA) {
+      const tag_data = TAG_DATA[value as TagsType];
+      return {
+        name: tag_data.name,
+        style: `--tag-bg-color:${tag_data.backgroundColor};--tag-color:${tag_data.textColor};`,
+      };
+    }
+    return {
+      name: value,
+      style: "",
+    };
+  })
+  .filter((element: any): element is Exclude<typeof element, null> => !!element);
 
 const date_formatter = new Intl.DateTimeFormat("th-TH", {
   dateStyle: "medium",
@@ -40,6 +67,15 @@ const formatDate = (date: Date) => date_formatter.format(date);
       </svg>
     </a>
   </header>
+  <div class="f">
+    {
+      tags.map(({ name, style }) => (
+        <span class="tag" style={style}>
+          {name}
+        </span>
+      ))
+    }
+  </div>
   <hr />
   <Content markdown={issue.body ?? ""} />
   <hr />
@@ -110,6 +146,7 @@ const formatDate = (date: Date) => date_formatter.format(date);
     </div>
   </footer>
 </article>
+
 <style lang="scss">
   article {
     border: 1px solid;
@@ -125,6 +162,20 @@ const formatDate = (date: Date) => date_formatter.format(date);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  .tag {
+    background: var(--tag-bg-color);
+
+    border: 1px solid;
+    border-color: var(--tag-bg-color);
+    border-radius: 99px;
+
+    color: var(--tag-color);
+    font-size: 0.8rem;
+    font-weight: 700;
+
+    padding: 0 8px;
   }
 
   hr {
