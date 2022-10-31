@@ -7,7 +7,7 @@ import type { TagsType } from "../data/tag-color";
 import Content from "./content.astro";
 
 interface Props {
-  issue: Endpoints["GET /repos/{owner}/{repo}/issues"]["response"]["data"][0];
+  issue: Endpoints["GET /repos/{owner}/{repo}/issues"]["response"]["data"][number];
 }
 
 const { issue } = Astro.props;
