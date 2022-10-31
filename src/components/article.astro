@@ -43,7 +43,7 @@ const formatDate = (date: Date) => date_formatter.format(date);
 
 <article>
   <header class="f">
-    <h1 title={issue.title}>
+    <h1 class="nw" title={issue.title}>
       {issue.title}
     </h1>
     <a
@@ -93,7 +93,7 @@ const formatDate = (date: Date) => date_formatter.format(date);
     {
       !!issue.reactions?.total_count && (
         <a
-          class="stats-container"
+          class="stats-container nw"
           href={issue.html_url}
           target="_blank"
           rel="nofollow noopener noreferrer"
@@ -128,12 +128,12 @@ const formatDate = (date: Date) => date_formatter.format(date);
         </a>
       )
     }
-    <div class="f author-container">
+    <div class="f author-container nw">
       <div>
         <div>
           {issue.user?.login}
         </div>
-        <div class="article-date">
+        <div class="article-date nw">
           <time datetime={new Date(issue.created_at ?? "").toISOString()}
             >{formatDate(new Date(issue.created_at ?? ""))}</time
           >
@@ -196,7 +196,6 @@ const formatDate = (date: Date) => date_formatter.format(date);
     border-radius: 999px;
 
     text-decoration: none;
-    white-space: nowrap;
 
     > img:not(:first-child) {
       margin-left: -12px;
@@ -212,12 +211,10 @@ const formatDate = (date: Date) => date_formatter.format(date);
     overflow-x: auto;
 
     text-align: end;
-    white-space: nowrap;
   }
 
   .article-date {
     font-size: 0.8rem;
-    white-space: nowrap;
   }
 
   .author-image {

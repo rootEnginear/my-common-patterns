@@ -28,7 +28,9 @@
       </header>
       <slot />
       <footer class="main-footer">
-        Copyright &copy; {new Date().getFullYear()} Suthep Chanchuphol All right reserved.
+        Copyright &copy; {new Date().getFullYear()} Suthep Chanchuphol <span class="nw"
+          >All right reserved.</span
+        >
         <br />
         <small>Build: {Date.now().toString(36)}</small>
       </footer>
@@ -77,6 +79,10 @@
         display: flex;
         align-items: center;
         gap: 8px;
+      }
+
+      .nw {
+        white-space: nowrap;
       }
 
       .main-header {
