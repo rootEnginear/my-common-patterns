@@ -6,6 +6,23 @@ interface Props {
   markdown: string;
 }
 
+const removeRepeatPreCode = (md: string) => {
+  return md
+    .replace(/<pre><code class="language-.+?">/g, "")
+    .replace(/<\/code><\/pre>\n<\/code><\/pre>/g, "</code></pre>");
+};
+
+const makeLinkExternal = (md: string) => {
+  return md.replace(
+    /<a href="(.+?)"/g,
+    '<a href="$1" target="_blank" rel="nofollow noopener noreferrer" title="$1"'
+  );
+};
+
+const formatMd = (md: string) => {
+  return makeLinkExternal(removeRepeatPreCode(md));
+};
+
 const { markdown } = Astro.props;
 
 const highlighter = await getHighlighter({
@@ -16,14 +33,7 @@ marked.setOptions({
   highlight: (code, lang) => highlighter.codeToHtml(code, { lang }),
 });
 
-const html = marked
-  .parse(markdown)
-  .replace(/<pre><code class="language-.+?">/g, "")
-  .replace(/<\/code><\/pre>\n<\/code><\/pre>/g, "</code></pre>")
-  .replace(
-    /<a href="(.+?)"/g,
-    '<a href="$1" target="_blank" rel="nofollow noopener noreferrer" title="$1"'
-  );
+const html = formatMd(marked.parse(markdown));
 ---
 
 <div class="content">
