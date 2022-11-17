@@ -39,13 +39,17 @@ const date_formatter = new Intl.DateTimeFormat("th-TH", {
   dateStyle: "medium",
 });
 const formatDate = (date: Date) => date_formatter.format(date);
+
+const formatTitle = (title: string) =>
+  title
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/`([^`]+?)`/g, "<code>$1</code>");
 ---
 
 <article>
   <header class="f">
-    <h1 class="nw" title={issue.title}>
-      {issue.title}
-    </h1>
+    <h1 class="nw" title={issue.title} set:html={formatTitle(issue.title)}></h1>
     <a
       class="f"
       href={issue.html_url}
