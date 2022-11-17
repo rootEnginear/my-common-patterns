@@ -46,6 +46,11 @@
         <small>Build: {Date.now().toString(36)}</small>
       </footer>
     </main>
+
+    <script is:inline>
+      const copy = (el) => navigator.clipboard.writeText(el.nextSibling.innerText);
+    </script>
+
     <style is:global>
       @font-face {
         font-family: "Noto Sans Thai Looped";
