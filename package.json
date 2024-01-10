@@ -13,8 +13,9 @@
   "dependencies": {
     "@octokit/core": "^4.1.0",
     "astro": "^1.5.2",
-    "astro-compress": "^1.0.12",
+    "astro-compress": "^2.2.7",
     "marked": "^4.1.1",
+    "sharp": "^0.33.1",
     "shiki": "^0.11.1"
   },
   "devDependencies": {

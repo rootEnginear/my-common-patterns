@@ -1,19 +1,20 @@
 import { defineConfig } from "astro/config";
-
-import compress from "astro-compress";
+import Compress from "astro-compress";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://rootenginear.github.io",
   base: "/my-common-patterns",
   integrations: [
-    compress({
-      html: {
-        collapseWhitespace: true,
-        removeComments: true,
-        removeRedundantAttributes: true,
+    Compress({
+      HTML: {
+        "html-minifier-terser": {
+          collapseWhitespace: true,
+          removeComments: true,
+          removeRedundantAttributes: true,
+        },
       },
-      img: false,
+      Image: false,
     }),
   ],
 });
